@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.user.dao.PayMessDao">
+    
+	<sql id="payMessColumns">
+		a.id AS "id",
+		a.order_no AS "orderNo",
+		a.bill_no AS "billNo",
+		a.pay_type AS "payType",
+		a.message AS "message",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.def_lag AS "defLag"
+	</sql>
+	
+	<sql id="payMessJoins">
+	</sql>
+    
+	<select id="get" resultType="PayMess">
+		SELECT 
+			<include refid="payMessColumns"/>
+		FROM pay_mess a
+		<include refid="payMessJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="PayMess">
+		SELECT 
+
+			<include refid="payMessColumns"/>
+		FROM pay_mess a
+		<include refid="payMessJoins"/>
+		<where>
+			
+			<if test="orderNo != null and orderNo != ''">
+				AND a.order_no = #{orderNo}
+			</if>
+			<if test="billNo != null and billNo != ''">
+				AND a.bill_no = #{billNo}
+			</if>
+			<if test="payType != null and payType != ''">
+				AND a.pay_type = #{payType}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="PayMess">
+		SELECT 
+			<include refid="payMessColumns"/>
+		FROM pay_mess a
+		<include refid="payMessJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO pay_mess(
+			id,
+			order_no,
+			bill_no,
+			pay_type,
+			message,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			def_lag
+		) VALUES (
+			#{id},
+			#{orderNo},
+			#{billNo},
+			#{payType},
+			#{message},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{defLag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE pay_mess SET 	
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM pay_mess
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

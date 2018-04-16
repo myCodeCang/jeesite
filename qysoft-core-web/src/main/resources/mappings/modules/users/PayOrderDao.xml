@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.user.dao.PayOrderDao">
+    
+	<sql id="payOrderColumns">
+		a.id AS "id",
+		a.user_name AS "userName",
+		a.order_no AS "orderNo",
+		a.pay_type AS "payType",
+		a.money AS "money",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.def_lag AS "defLag"
+	</sql>
+	
+	<sql id="payOrderJoins">
+	</sql>
+    
+	<select id="get" resultType="PayOrder">
+		SELECT 
+			<include refid="payOrderColumns"/>
+		FROM pay_order a
+		<include refid="payOrderJoins"/>
+		WHERE a.id = #{id}
+	</select>
+
+	<select id="getByOrderNo" resultType="PayOrder">
+		SELECT
+		<include refid="payOrderColumns"/>
+		FROM pay_order a
+		<include refid="payOrderJoins"/>
+		WHERE a.order_no = #{orderNo}
+	</select>
+	
+	<select id="findList" resultType="PayOrder">
+		SELECT 
+
+			<include refid="payOrderColumns"/>
+		FROM pay_order a
+		<include refid="payOrderJoins"/>
+		<where>
+			
+			<if test="userName != null and userName != ''">
+				AND a.user_name = #{userName}
+			</if>
+			<if test="orderNo != null and orderNo != ''">
+				AND a.order_no = #{orderNo}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="PayOrder">
+		SELECT 
+			<include refid="payOrderColumns"/>
+		FROM pay_order a
+		<include refid="payOrderJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO pay_order(
+			id,
+			user_name,
+			order_no,
+			pay_type,
+			money,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			def_lag
+		) VALUES (
+			#{id},
+			#{userName},
+			#{orderNo},
+			#{payType},
+			#{money},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{defLag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE pay_order SET 	
+			user_name = #{userName},
+			order_no = #{orderNo},
+			pay_type = #{payType},
+			money = #{money},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks},
+			def_lag = #{defLag}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM pay_order
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
